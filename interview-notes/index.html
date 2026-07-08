@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Notes · Elevated</title>
+<style>
+  :root {
+    --ef-bg:        #0A0A0A;
+    --ef-panel:     #141414;
+    --ef-panel-2:   #1B1B1B;
+    --ef-accent:    #35685E;
+    --ef-accent-br: #6FB3A4;
+    --ef-accent-dk: #244840;
+    --ef-text:      #FAFAFA;
+    --ef-dim:       #B0B0B0;
+    --ef-muted:     #6E6E6E;
+    --ef-border:    #262626;
+    --ef-amber:     #C9922B;
+    --ef-radius:    10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--ef-bg);
+    color: var(--ef-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 22px 20px 60px; }
+
+  /* Header */
+  .hd { display: flex; align-items: center; gap: 14px; padding-bottom: 18px; border-bottom: 1px solid var(--ef-border); margin-bottom: 22px; }
+  .hd-mark {
+    width: 38px; height: 38px; border-radius: 9px; flex-shrink: 0;
+    background: var(--ef-accent); display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: #fff; font-size: 17px; letter-spacing: -.5px;
+  }
+  .hd-title { font-size: 17px; font-weight: 600; letter-spacing: -.2px; }
+  .hd-sub { font-size: 12.5px; color: var(--ef-muted); margin-top: 1px; }
+  .hd-badge {
+    margin-left: auto; font-size: 11px; font-weight: 600; letter-spacing: .04em;
+    color: var(--ef-accent-br); background: var(--ef-accent-dk);
+    padding: 4px 10px; border-radius: 999px; text-transform: uppercase;
+  }
+
+  /* Candidate strip */
+  .cand {
+    display: flex; align-items: center; gap: 13px;
+    background: var(--ef-panel); border: 1px solid var(--ef-border);
+    border-radius: var(--ef-radius); padding: 13px 16px; margin-bottom: 20px;
+  }
+  .cand-av {
+    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+    background: var(--ef-accent-dk); color: var(--ef-accent-br);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px;
+  }
+  .cand-name { font-weight: 600; font-size: 15px; }
+  .cand-meta { font-size: 12.5px; color: var(--ef-dim); margin-top: 1px; }
+  .cand-stage {
+    margin-left: auto; text-align: right;
+  }
+  .cand-stage-lbl { font-size: 10.5px; color: var(--ef-muted); text-transform: uppercase; letter-spacing: .06em; }
+  .cand-stage-val { font-size: 13px; font-weight: 600; color: var(--ef-accent-br); margin-top: 2px; }
+
+  /* Stage tabs */
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--ef-panel); padding: 4px; border-radius: var(--ef-radius); border: 1px solid var(--ef-border); }
+  .tab {
+    flex: 1; text-align: center; padding: 9px 8px; border-radius: 7px;
+    font-size: 13px; font-weight: 500; color: var(--ef-dim); cursor: pointer;
+    background: transparent; border: none; font-family: inherit;
+    transition: background .14s, color .14s;
+  }
+  .tab:hover { color: var(--ef-text); }
+  .tab.active { background: var(--ef-accent); color: #fff; font-weight: 600; }
+  .tab .tab-sub { display: block; font-size: 10.5px; font-weight: 400; opacity: .8; margin-top: 1px; }
+
+  /* Panels */
+  .panel { display: none; }
+  .panel.active { display: block; animation: fade .18s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+
+  .field { margin-bottom: 20px; }
+  .field-lbl { display: block; font-size: 13px; font-weight: 600; margin-bottom: 7px; }
+  .field-key { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: var(--ef-muted); font-weight: 400; margin-left: 6px; }
+  .field-hint { font-size: 12px; color: var(--ef-muted); margin-bottom: 8px; }
+  textarea, input[type=text] {
+    width: 100%; background: var(--ef-panel); color: var(--ef-text);
+    border: 1px solid var(--ef-border); border-radius: 8px;
+    padding: 11px 13px; font-family: inherit; font-size: 14px; line-height: 1.55;
+    resize: vertical; transition: border-color .14s, box-shadow .14s;
+  }
+  textarea { min-height: 120px; }
+  textarea:focus, input[type=text]:focus {
+    outline: none; border-color: var(--ef-accent);
+    box-shadow: 0 0 0 3px rgba(53,104,94,.22);
+  }
+  textarea::placeholder, input::placeholder { color: var(--ef-muted); }
+
+  /* Script reference (collapsible, kept separate from notes per field-dictionary decision) */
+  .script {
+    background: var(--ef-panel-2); border: 1px solid var(--ef-border);
+    border-left: 3px solid var(--ef-accent); border-radius: 0 8px 8px 0;
+    margin-bottom: 12px; overflow: hidden;
+  }
+  .script summary {
+    cursor: pointer; padding: 10px 14px; font-size: 12.5px; font-weight: 600;
+    color: var(--ef-accent-br); list-style: none; user-select: none;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .script summary::-webkit-details-marker { display: none; }
+  .script summary::before { content: "▸"; font-size: 11px; transition: transform .14s; }
+  .script[open] summary::before { transform: rotate(90deg); }
+  .script-body { padding: 0 14px 13px 14px; font-size: 13px; color: var(--ef-dim); line-height: 1.6; }
+  .script-body li { margin: 4px 0 4px 4px; }
+
+  /* Scoring — the "coming soon / your input wanted" section */
+  .scoring {
+    background: var(--ef-panel); border: 1px dashed var(--ef-accent);
+    border-radius: var(--ef-radius); padding: 16px 18px; margin: 8px 0 20px;
+  }
+  .scoring-hd { display: flex; align-items: center; gap: 9px; margin-bottom: 4px; }
+  .scoring-hd h3 { font-size: 14px; font-weight: 600; }
+  .scoring-tag {
+    font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--ef-amber); border: 1px solid var(--ef-amber); border-radius: 999px; padding: 2px 8px;
+  }
+  .scoring-note { font-size: 12.5px; color: var(--ef-muted); margin-bottom: 14px; }
+  .score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .score-item { }
+  .score-item-lbl { font-size: 12px; color: var(--ef-dim); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .score-item-lbl b { color: var(--ef-accent-br); font-weight: 600; }
+  .score-slider { width: 100%; accent-color: var(--ef-accent); cursor: pointer; }
+  .score-total { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--ef-border); font-size: 13px; color: var(--ef-dim); text-align: right; }
+  .score-total b { color: var(--ef-accent-br); font-size: 16px; font-weight: 700; }
+
+  /* Footer actions */
+  .actions {
+    position: sticky; bottom: 0; margin-top: 26px; padding: 16px 0 4px;
+    background: linear-gradient(to top, var(--ef-bg) 70%, transparent);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .btn {
+    font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+    border-radius: 8px; padding: 11px 20px; border: 1px solid transparent;
+    transition: background .14s, border-color .14s, transform .1s;
+  }
+  .btn:active { transform: scale(.98); }
+  .btn-primary { background: var(--ef-accent); color: #fff; }
+  .btn-primary:hover { background: #3f7d70; }
+  .btn-ghost { background: transparent; color: var(--ef-dim); border-color: var(--ef-border); }
+  .btn-ghost:hover { color: var(--ef-text); border-color: var(--ef-muted); }
+  .save-state { font-size: 12.5px; color: var(--ef-muted); margin-left: auto; }
+  .save-state.saved { color: var(--ef-accent-br); }
+
+  .foot-note { text-align: center; font-size: 11px; color: var(--ef-muted); margin-top: 20px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hd">
+    <div class="hd-mark">E</div>
+    <div>
+      <div class="hd-title">Interview Notes</div>
+      <div class="hd-sub">Structured capture · syncs to contact record</div>
+    </div>
+    <span class="hd-badge">App&nbsp;02 · POC</span>
+  </div>
+
+  <div class="cand">
+    <div class="cand-av" id="candInitials">TR</div>
+    <div>
+      <div class="cand-name" id="candName">Taylor Reynolds</div>
+      <div class="cand-meta" id="candMeta">Outside Sales Professional · Indeed · Applied 3d ago</div>
+    </div>
+    <div class="cand-stage">
+      <div class="cand-stage-lbl">Current stage</div>
+      <div class="cand-stage-val" id="candStage">1st Interview</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-panel="screening">Screening<span class="tab-sub">screening_notes</span></button>
+    <button class="tab" data-panel="iv1">1st Interview<span class="tab-sub">iv1_notes</span></button>
+    <button class="tab" data-panel="final">Final<span class="tab-sub">iv_final_notes</span></button>
+  </div>
+
+  <!-- SCREENING -->
+  <div class="panel active" data-panel="screening">
+    <details class="script">
+      <summary>Screening call script &amp; prompts</summary>
+      <div class="script-body">
+        Kept separate from notes so scripts can be updated centrally.
+        <ul>
+          <li>Confirm they watched the Career Overview videos.</li>
+          <li>"Tell me about yourself professionally — why a new position?"</li>
+          <li>Interest rating 1–10 after the CO. 7+ moves forward.</li>
+          <li>Valid license + reliable transportation?</li>
+        </ul>
+      </div>
+    </details>
+    <div class="field">
+      <label class="field-lbl">Screening notes <span class="field-key">screening_notes</span></label>
+      <div class="field-hint">Interest signals, push/pull factors, red flags, and the interest rating.</div>
+      <textarea placeholder="What stood out? Interest level, motivation, any concerns…"></textarea>
+    </div>
+  </div>
+
+  <!-- 1ST INTERVIEW -->
+  <div class="panel" data-panel="iv1">
+    <details class="script">
+      <summary>1st interview script &amp; the 5 objections</summary>
+      <div class="script-body">
+        <ul>
+          <li>OBJ 1 — Money: cushion if income lags to month 2/3?</li>
+          <li>OBJ 2 — Support at home: what does spouse/family think?</li>
+          <li>OBJ 3 — Schedule: self-management amid distractions.</li>
+          <li>OBJ 4 — Coachability: follow the system when it's unclear?</li>
+          <li>OBJ 5 — Grit: hardest thing overcome; what keeps them going.</li>
+        </ul>
+      </div>
+    </details>
+    <div class="field">
+      <label class="field-lbl">1st interview notes <span class="field-key">iv1_notes</span></label>
+      <div class="field-hint">Objection responses, fit signals, hours/week, income requirements.</div>
+      <textarea placeholder="How did they handle the objections? Fit, energy, commitment…"></textarea>
+    </div>
+
+    <div class="scoring">
+      <div class="scoring-hd">
+        <h3>Qualification scoring</h3>
+        <span class="scoring-tag">Feedback wanted</span>
+      </div>
+      <div class="scoring-note">Pulled pending recruiter input. Sliders shown for discussion — do these four dimensions match how you actually evaluate? Tell us at the roundtable.</div>
+      <div class="score-grid">
+        <div class="score-item">
+          <div class="score-item-lbl">Personality <b><span class="sv">2</span>/3</b></div>
+          <input type="range" min="0" max="3" step="1" value="2" class="score-slider">
+        </div>
+        <div class="score-item">
+          <div class="score-item-lbl">Situation <b><span class="sv">2</span>/3</b></div>
+          <input type="range" min="0" max="3" step="1" value="2" class="score-slider">
+        </div>
+        <div class="score-item">
+          <div class="score-item-lbl">Experience <b><span class="sv">3</span>/3</b></div>
+          <input type="range" min="0" max="3" step="1" value="3" class="score-slider">
+        </div>
+        <div class="score-item">
+          <div class="score-item-lbl">X Factor <b><span class="sv">1</span>/1</b></div>
+          <input type="range" min="0" max="1" step="1" value="1" class="score-slider">
+        </div>
+      </div>
+      <div class="score-total">Total <b id="scoreTotal">8</b> / 10</div>
+    </div>
+  </div>
+
+  <!-- FINAL -->
+  <div class="panel" data-panel="final">
+    <details class="script">
+      <summary>Final interview wrap-up prompts</summary>
+      <div class="script-body">
+        <ul>
+          <li>Which of the 5 challenges is biggest for you? Why?</li>
+          <li>Share core values — which one resonates most?</li>
+          <li>Do you think we should work together? Why?</li>
+          <li>Pre-offer questions (surface before extending).</li>
+        </ul>
+      </div>
+    </details>
+    <div class="field">
+      <label class="field-lbl">Final interview notes <span class="field-key">iv_final_notes</span></label>
+      <div class="field-hint">Closing signals, pre-offer questions, decision rationale.</div>
+      <textarea placeholder="Are they in? Remaining questions before an offer…"></textarea>
+    </div>
+    <div class="field">
+      <label class="field-lbl">Pre-offer questions <span class="field-key">final_iv_pre_offer</span></label>
+      <input type="text" placeholder="Anything they need answered before the offer…">
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="saveBtn">Save to contact</button>
+    <button class="btn btn-ghost">Copy summary</button>
+    <span class="save-state" id="saveState">Draft · not yet saved</span>
+  </div>
+
+  <div class="foot-note">POC façade · writes to the contact record via the recruiter sub in production</div>
+
+</div>
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(function (t) {
+    t.addEventListener('click', function () {
+      var p = t.dataset.panel;
+      document.querySelectorAll('.tab').forEach(function (x) { x.classList.toggle('active', x === t); });
+      document.querySelectorAll('.panel').forEach(function (x) { x.classList.toggle('active', x.dataset.panel === p); });
+    });
+  });
+  // Score slider readouts + running total (max 10)
+  var sliders = document.querySelectorAll('.score-slider');
+  var totalEl = document.getElementById('scoreTotal');
+  function recompute() {
+    var t = 0;
+    sliders.forEach(function (s) {
+      s.parentElement.querySelector('.sv').textContent = s.value;
+      t += parseInt(s.value, 10);
+    });
+    if (totalEl) totalEl.textContent = t;
+  }
+  sliders.forEach(function (s) { s.addEventListener('input', recompute); });
+  recompute();
+  // Save façade
+  var saveBtn = document.getElementById('saveBtn');
+  var saveState = document.getElementById('saveState');
+  saveBtn.addEventListener('click', function () {
+    saveState.textContent = 'Saving…';
+    saveState.classList.remove('saved');
+    setTimeout(function () {
+      saveState.textContent = '✓ Saved to Taylor Reynolds · just now';
+      saveState.classList.add('saved');
+    }, 550);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elevated — Onboarding Handoff (Prototype)</title>
+<style>
+  :root {
+    --coral: #ff6b5a;
+    --teal: #4ecdc4;
+    --ink: #1a1d23;
+    --slate: #2a2e37;
+    --slate-2: #333842;
+    --line: #3d4350;
+    --text: #e8eaed;
+    --muted: #9aa0ac;
+    --good: #4ecdc4;
+    --warn: #ffb454;
+    --bg: #14161b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  h1, h2, h3 { font-family: 'Space Mono', 'DM Sans', monospace; letter-spacing: -0.5px; }
+  .proto-banner {
+    background: linear-gradient(90deg, rgba(255,107,90,0.15), rgba(78,205,196,0.15));
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .proto-banner strong { color: var(--text); }
+  .stage-label {
+    display: inline-block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--teal);
+    margin-bottom: 6px;
+  }
+  h1 { font-size: 24px; margin-bottom: 4px; }
+  .sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+
+  /* --- Step flow indicator --- */
+  .flow {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .flow-step {
+    flex: 1;
+    min-width: 140px;
+    background: var(--slate);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--muted);
+    position: relative;
+    transition: all 0.3s;
+  }
+  .flow-step.active {
+    border-color: var(--teal);
+    background: var(--slate-2);
+    color: var(--text);
+  }
+  .flow-step.done {
+    border-color: var(--good);
+    color: var(--good);
+  }
+  .flow-step .n {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    margin-right: 6px;
+  }
+
+  /* --- Cards --- */
+  .card {
+    background: var(--slate);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 20px;
+  }
+  .hidden { display: none; }
+
+  /* --- Pipeline board (Step 1) --- */
+  .board { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 6px; }
+  .col {
+    min-width: 210px;
+    background: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .col h3 { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .col.dropzone { border: 1px dashed var(--line); transition: all 0.2s; }
+  .col.dropzone.over { border-color: var(--coral); background: rgba(255,107,90,0.08); }
+  .opp-card {
+    background: var(--slate-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    cursor: grab;
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+  .opp-card:hover { border-color: var(--teal); transform: translateY(-1px); }
+  .opp-card:active { cursor: grabbing; }
+  .opp-card .name { font-weight: 600; }
+  .opp-card .meta { color: var(--muted); font-size: 11px; margin-top: 2px; }
+  .drag-hint { font-size: 11px; color: var(--coral); margin-top: 10px; }
+
+  /* --- Task notification (Step 2) --- */
+  .task {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: var(--slate-2);
+    border: 1px solid var(--teal);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .task .icon { font-size: 20px; }
+  .task .body { flex: 1; }
+  .task .title { font-weight: 600; margin-bottom: 2px; }
+  .task .desc { font-size: 13px; color: var(--muted); }
+
+  /* --- Form (Step 3) --- */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .field label .req { color: var(--coral); }
+  .field input, .field select, .field textarea {
+    background: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 9px 11px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--teal);
+  }
+  .field textarea { resize: vertical; min-height: 60px; }
+  .field .ss-tag {
+    font-size: 10px;
+    color: var(--warn);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .group-head {
+    grid-column: 1 / -1;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--teal);
+    margin-top: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+  }
+  .group-head:first-child { margin-top: 0; }
+
+  .form-actions { margin-top: 22px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  button {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 22px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: linear-gradient(90deg, var(--coral), #ff8a7a);
+    color: white;
+  }
+  .btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--muted);
+  }
+  .warn-note {
+    font-size: 12px;
+    color: var(--warn);
+    background: rgba(255,180,84,0.1);
+    border: 1px solid rgba(255,180,84,0.3);
+    border-radius: 7px;
+    padding: 8px 12px;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  /* --- Confirmation (Step 4) --- */
+  .confirm { text-align: center; padding: 20px; }
+  .confirm .big { font-size: 44px; margin-bottom: 10px; }
+  .confirm h2 { color: var(--good); margin-bottom: 10px; }
+  .confirm .detail {
+    text-align: left;
+    background: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 16px auto 0;
+    max-width: 520px;
+    font-size: 13px;
+  }
+  .confirm .detail .row { display: flex; gap: 8px; padding: 4px 0; }
+  .confirm .detail .row .k { color: var(--muted); min-width: 150px; }
+  .confirm .detail .row .v { color: var(--text); }
+  .confirm .detail .row .v.good { color: var(--good); }
+  .reset { margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<div class="proto-banner">
+  <strong>⚠️ PROTOTYPE / PROOF OF CONCEPT.</strong> Placeholder data, no live GHL connection. This demonstrates the <em>flow &amp; interaction</em> Dillon approved: recruiter drags the candidate to the pass-off stage → a task appears → the form opens → "Send Onboarding Email" fires the handoff. The real version writes to GHL and triggers the actual workflow.
+</div>
+
+<h1>Elevated — Onboarding Handoff</h1>
+<div class="sub">App #3 · Recruiter pre-onboarding checklist &amp; baton pass</div>
+
+<!-- Flow indicator -->
+<div class="flow" id="flow">
+  <div class="flow-step active" data-step="1"><span class="n">1</span>Drag to "Onboarding Pass-Off"</div>
+  <div class="flow-step" data-step="2"><span class="n">2</span>Task appears</div>
+  <div class="flow-step" data-step="3"><span class="n">3</span>Complete checklist</div>
+  <div class="flow-step" data-step="4"><span class="n">4</span>Send onboarding email</div>
+</div>
+
+<!-- STEP 1: Pipeline board -->
+<div class="card" id="step1">
+  <span class="stage-label">Step 1 · Applicant Pipeline</span>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Drag <strong>Jordan Rivera</strong> from "Offer Extended" into "Onboarding Pass-Off" to begin the handoff.</p>
+  <div class="board">
+    <div class="col">
+      <h3>Final Interview</h3>
+      <div class="opp-card"><div class="name">Sam Chen</div><div class="meta">HC: Maria · 3 days</div></div>
+    </div>
+    <div class="col">
+      <h3>Offer Extended</h3>
+      <div class="opp-card" id="dragCard" draggable="true">
+        <div class="name">Jordan Rivera</div>
+        <div class="meta">HC: Maria · Recruiter: You</div>
+      </div>
+      <div class="drag-hint">↑ drag this card →</div>
+    </div>
+    <div class="col dropzone" id="dropzone">
+      <h3>⭐ Onboarding Pass-Off</h3>
+      <div style="font-size:11px;color:var(--muted);">drop here</div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2: Task notification -->
+<div class="card hidden" id="step2">
+  <span class="stage-label">Step 2 · Task auto-created (from the drag)</span>
+  <div class="task">
+    <div class="icon">📋</div>
+    <div class="body">
+      <div class="title">Complete Onboarding Handoff — Jordan Rivera</div>
+      <div class="desc">You moved Jordan to Onboarding Pass-Off. Complete the recruiter checklist and send the onboarding email to hand off to Laura.</div>
+      <div style="margin-top:10px;">
+        <button class="btn-primary" onclick="openForm()">Open Checklist →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3: Form -->
+<div class="card hidden" id="step3">
+  <span class="stage-label">Step 3 · Recruiter Checklist — Jordan Rivera</span>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">Fields marked <span style="color:var(--coral)">*</span> feed the Smartsheet production push at the end of onboarding. Blanks won't block the handoff — Laura will chase anything missing.</p>
+
+  <div class="form-grid" id="formGrid">
+    <div class="group-head">Assignment &amp; Credit</div>
+    <div class="field"><label>FHD Recruiter Credit <span class="ss-tag">smartsheet</span></label><input type="text" value="You"></div>
+    <div class="field"><label>Sourced By <span class="ss-tag">smartsheet</span></label><input type="text" placeholder="e.g. Indeed / referral name"></div>
+    <div class="field"><label>Interviewer <span class="ss-tag">smartsheet</span></label><input type="text" placeholder="Who interviewed"></div>
+    <div class="field"><label>Field Trainer <span class="ss-tag">smartsheet</span></label><input type="text" placeholder="Assigned trainer"></div>
+    <div class="field"><label>Agency Owner <span class="ss-tag">smartsheet</span></label><input type="text" placeholder="AO name"></div>
+
+    <div class="group-head">Sales School &amp; Logistics</div>
+    <div class="field"><label>Pay Plan <span class="ss-tag">smartsheet</span></label>
+      <select><option value="">Select…</option><option>Standard</option><option>Advanced</option><option>Custom</option></select></div>
+    <div class="field"><label>Sales School <span class="ss-tag">smartsheet</span></label>
+      <select><option value="">Select…</option><option>Confirmed</option><option>Pending</option></select></div>
+    <div class="field"><label>SS Week <span class="ss-tag">smartsheet</span></label><input type="date"></div>
+    <div class="field"><label>Flying or Driving <span class="ss-tag">smartsheet</span></label>
+      <select><option value="">Select…</option><option>Flying</option><option>Driving</option></select></div>
+    <div class="field"><label>Need SS Hotel</label>
+      <select><option value="">Select…</option><option>Yes</option><option>No</option></select></div>
+    <div class="field"><label>State Selling In <span class="ss-tag">smartsheet</span></label><input type="text" placeholder="e.g. TX"></div>
+
+    <div class="group-head">Licensing &amp; Exam</div>
+    <div class="field"><label>Licensing Course</label>
+      <select><option value="">Select…</option><option>Purchased</option><option>In progress</option><option>Complete</option></select></div>
+    <div class="field"><label>Proof of Course Purchase</label><input type="text" placeholder="Confirmation # / link"></div>
+    <div class="field"><label>Exam Scheduled (date)</label><input type="date"></div>
+    <div class="field"><label>Exam Time</label><input type="text" placeholder="e.g. 2:00 PM"></div>
+    <div class="field"><label>Fingerprints Done</label>
+      <select><option value="">Select…</option><option>Yes</option><option>No</option></select></div>
+    <div class="field"><label>License Application Confirmed</label>
+      <select><option value="">Select…</option><option>Yes</option><option>No</option></select></div>
+
+    <div class="group-head">Accounts &amp; Equipment</div>
+    <div class="field"><label>New FHD Email</label><input type="email" placeholder="name@fhd…"></div>
+    <div class="field"><label>Voxer Username</label><input type="text" placeholder="Voxer handle"></div>
+    <div class="field"><label>iPad</label>
+      <select><option value="">Select…</option><option>Issued</option><option>Not yet</option><option>N/A</option></select></div>
+    <div class="field"><label>Admin To-Do <span class="ss-tag">smartsheet</span></label><input type="text" placeholder="Any admin follow-ups"></div>
+
+    <div class="group-head">Notes</div>
+    <div class="field full"><label>SS Special Circumstances</label><textarea placeholder="Anything unusual about this hire's sales school…"></textarea></div>
+    <div class="field full"><label>Keep in Mind Notes</label><textarea placeholder="Context Laura should know…"></textarea></div>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn-primary" onclick="sendHandoff()">📧 Send Onboarding Email</button>
+    <button class="btn-ghost" onclick="location.reload()">Cancel</button>
+    <div class="warn-note">Any blank fields are captured on a task for Laura to chase down — the handoff still completes.</div>
+  </div>
+</div>
+
+<!-- STEP 4: Confirmation -->
+<div class="card hidden" id="step4">
+  <div class="confirm">
+    <div class="big">✅</div>
+    <h2>Onboarding Email Sent</h2>
+    <p style="color:var(--muted);">Jordan Rivera has been handed off to Laura. Here's what fired automatically:</p>
+    <div class="detail">
+      <div class="row"><span class="k">📧 Baton-pass email</span><span class="v good">Sent to Laura + Jordan</span></div>
+      <div class="row"><span class="k">🏆 Applicant opportunity</span><span class="v good">Marked WON</span></div>
+      <div class="row"><span class="k">➕ Hired pipeline</span><span class="v good">New opportunity created</span></div>
+      <div class="row"><span class="k">👤 Owner assigned</span><span class="v good">Laura</span></div>
+      <div class="row"><span class="k">👥 Followers added</span><span class="v good">HC, Recruiter, Director</span></div>
+      <div class="row"><span class="k">📋 Missing-field task</span><span class="v">Created for Laura (if any blanks)</span></div>
+    </div>
+    <div class="reset">
+      <button class="btn-ghost" onclick="location.reload()">↺ Run the demo again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- Prototype flow logic (no backend; pure demonstration) ---
+
+  function setFlow(step) {
+    document.querySelectorAll('.flow-step').forEach(el => {
+      const s = Number(el.dataset.step);
+      el.classList.remove('active', 'done');
+      if (s < step) el.classList.add('done');
+      if (s === step) el.classList.add('active');
+    });
+  }
+
+  function show(id) { document.getElementById(id).classList.remove('hidden'); }
+  function hide(id) { document.getElementById(id).classList.add('hidden'); }
+
+  // Step 1: drag-and-drop
+  const card = document.getElementById('dragCard');
+  const zone = document.getElementById('dropzone');
+
+  card.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('text/plain', 'jordan');
+  });
+  zone.addEventListener('dragover', e => {
+    e.preventDefault();
+    zone.classList.add('over');
+  });
+  zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('over');
+    // Simulate the card landing + the task auto-creating
+    zone.innerHTML = '<h3>⭐ Onboarding Pass-Off</h3><div class="opp-card"><div class="name">Jordan Rivera</div><div class="meta">just moved</div></div>';
+    setFlow(2);
+    show('step2');
+    document.getElementById('step2').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  function openForm() {
+    setFlow(3);
+    show('step3');
+    document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function sendHandoff() {
+    setFlow(4);
+    hide('step3');
+    show('step4');
+    document.getElementById('step4').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+</script>
+
+</body>
+</html>
