@@ -6,17 +6,18 @@
 <title>Interview Notes · Elevated</title>
 <style>
   :root {
-    --ef-bg:        #0A0A0A;
-    --ef-panel:     #141414;
-    --ef-panel-2:   #1B1B1B;
     --ef-accent:    #35685E;
     --ef-accent-br: #6FB3A4;
     --ef-accent-dk: #244840;
-    --ef-text:      #FAFAFA;
-    --ef-dim:       #B0B0B0;
-    --ef-muted:     #6E6E6E;
-    --ef-border:    #262626;
-    --ef-amber:     #C9922B;
+    --ef-header:    #0F1A17;
+    --ef-bg:        #FFFFFF;
+    --ef-surface:   #F7F9F8;
+    --ef-surface-2: #EEF2F1;
+    --ef-text:      #1A2420;
+    --ef-dim:       #5C6B65;
+    --ef-muted:     #94A29C;
+    --ef-border:    #E1E7E5;
+    --ef-amber:     #B07D1F;
     --ef-radius:    10px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,54 +29,58 @@
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 860px; margin: 0 auto; padding: 22px 20px 60px; }
 
-  /* Header */
-  .hd { display: flex; align-items: center; gap: 14px; padding-bottom: 18px; border-bottom: 1px solid var(--ef-border); margin-bottom: 22px; }
-  .hd-mark {
-    width: 38px; height: 38px; border-radius: 9px; flex-shrink: 0;
-    background: var(--ef-accent); display: flex; align-items: center; justify-content: center;
-    font-weight: 700; color: #fff; font-size: 17px; letter-spacing: -.5px;
+  /* Dark green header strip — bridges the dark GHL sidebar to the white body */
+  .topbar {
+    background: var(--ef-header);
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 13px;
   }
-  .hd-title { font-size: 17px; font-weight: 600; letter-spacing: -.2px; }
-  .hd-sub { font-size: 12.5px; color: var(--ef-muted); margin-top: 1px; }
-  .hd-badge {
-    margin-left: auto; font-size: 11px; font-weight: 600; letter-spacing: .04em;
-    color: var(--ef-accent-br); background: var(--ef-accent-dk);
+  .topbar-mark {
+    width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
+    background: var(--ef-accent); display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: #fff; font-size: 16px; letter-spacing: -.5px;
+  }
+  .topbar-title { font-size: 16px; font-weight: 600; color: #F5F8F7; letter-spacing: -.2px; }
+  .topbar-sub { font-size: 12px; color: #8FA39C; margin-top: 1px; }
+  .topbar-badge {
+    margin-left: auto; font-size: 10.5px; font-weight: 600; letter-spacing: .05em;
+    color: var(--ef-accent-br); background: rgba(53,104,94,.28);
     padding: 4px 10px; border-radius: 999px; text-transform: uppercase;
   }
+
+  .wrap { max-width: 820px; margin: 0 auto; padding: 22px 24px 60px; }
 
   /* Candidate strip */
   .cand {
     display: flex; align-items: center; gap: 13px;
-    background: var(--ef-panel); border: 1px solid var(--ef-border);
+    background: var(--ef-surface); border: 1px solid var(--ef-border);
     border-radius: var(--ef-radius); padding: 13px 16px; margin-bottom: 20px;
   }
   .cand-av {
     width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
-    background: var(--ef-accent-dk); color: var(--ef-accent-br);
+    background: var(--ef-accent-dk); color: #fff;
     display: flex; align-items: center; justify-content: center;
     font-weight: 700; font-size: 14px;
   }
   .cand-name { font-weight: 600; font-size: 15px; }
   .cand-meta { font-size: 12.5px; color: var(--ef-dim); margin-top: 1px; }
-  .cand-stage {
-    margin-left: auto; text-align: right;
-  }
+  .cand-stage { margin-left: auto; text-align: right; }
   .cand-stage-lbl { font-size: 10.5px; color: var(--ef-muted); text-transform: uppercase; letter-spacing: .06em; }
-  .cand-stage-val { font-size: 13px; font-weight: 600; color: var(--ef-accent-br); margin-top: 2px; }
+  .cand-stage-val { font-size: 13px; font-weight: 600; color: var(--ef-accent); margin-top: 2px; }
 
   /* Stage tabs */
-  .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--ef-panel); padding: 4px; border-radius: var(--ef-radius); border: 1px solid var(--ef-border); }
+  .tabs { display: flex; gap: 4px; margin-bottom: 22px; background: var(--ef-surface); padding: 4px; border-radius: var(--ef-radius); border: 1px solid var(--ef-border); }
   .tab {
     flex: 1; text-align: center; padding: 9px 8px; border-radius: 7px;
     font-size: 13px; font-weight: 500; color: var(--ef-dim); cursor: pointer;
     background: transparent; border: none; font-family: inherit;
     transition: background .14s, color .14s;
   }
-  .tab:hover { color: var(--ef-text); }
+  .tab:hover { color: var(--ef-text); background: var(--ef-surface-2); }
   .tab.active { background: var(--ef-accent); color: #fff; font-weight: 600; }
-  .tab .tab-sub { display: block; font-size: 10.5px; font-weight: 400; opacity: .8; margin-top: 1px; }
+  .tab.active:hover { background: var(--ef-accent); }
+  .tab .tab-sub { display: block; font-size: 10.5px; font-weight: 400; opacity: .82; margin-top: 1px; }
 
   /* Panels */
   .panel { display: none; }
@@ -87,38 +92,38 @@
   .field-key { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: var(--ef-muted); font-weight: 400; margin-left: 6px; }
   .field-hint { font-size: 12px; color: var(--ef-muted); margin-bottom: 8px; }
   textarea, input[type=text] {
-    width: 100%; background: var(--ef-panel); color: var(--ef-text);
+    width: 100%; background: #fff; color: var(--ef-text);
     border: 1px solid var(--ef-border); border-radius: 8px;
-    padding: 11px 13px; font-family: inherit; font-size: 14px; line-height: 1.55;
+    padding: 12px 14px; font-family: inherit; font-size: 14.5px; line-height: 1.6;
     resize: vertical; transition: border-color .14s, box-shadow .14s;
   }
-  textarea { min-height: 120px; }
+  textarea { min-height: 150px; }
   textarea:focus, input[type=text]:focus {
     outline: none; border-color: var(--ef-accent);
-    box-shadow: 0 0 0 3px rgba(53,104,94,.22);
+    box-shadow: 0 0 0 3px rgba(53,104,94,.14);
   }
   textarea::placeholder, input::placeholder { color: var(--ef-muted); }
 
-  /* Script reference (collapsible, kept separate from notes per field-dictionary decision) */
+  /* Script reference */
   .script {
-    background: var(--ef-panel-2); border: 1px solid var(--ef-border);
+    background: var(--ef-surface); border: 1px solid var(--ef-border);
     border-left: 3px solid var(--ef-accent); border-radius: 0 8px 8px 0;
     margin-bottom: 12px; overflow: hidden;
   }
   .script summary {
     cursor: pointer; padding: 10px 14px; font-size: 12.5px; font-weight: 600;
-    color: var(--ef-accent-br); list-style: none; user-select: none;
+    color: var(--ef-accent); list-style: none; user-select: none;
     display: flex; align-items: center; gap: 8px;
   }
   .script summary::-webkit-details-marker { display: none; }
-  .script summary::before { content: "▸"; font-size: 11px; transition: transform .14s; }
+  .script summary::before { content: "\25B8"; font-size: 11px; transition: transform .14s; }
   .script[open] summary::before { transform: rotate(90deg); }
   .script-body { padding: 0 14px 13px 14px; font-size: 13px; color: var(--ef-dim); line-height: 1.6; }
   .script-body li { margin: 4px 0 4px 4px; }
 
-  /* Scoring — the "coming soon / your input wanted" section */
+  /* Scoring */
   .scoring {
-    background: var(--ef-panel); border: 1px dashed var(--ef-accent);
+    background: var(--ef-surface); border: 1px dashed var(--ef-accent);
     border-radius: var(--ef-radius); padding: 16px 18px; margin: 8px 0 20px;
   }
   .scoring-hd { display: flex; align-items: center; gap: 9px; margin-bottom: 4px; }
@@ -127,19 +132,18 @@
     font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
     color: var(--ef-amber); border: 1px solid var(--ef-amber); border-radius: 999px; padding: 2px 8px;
   }
-  .scoring-note { font-size: 12.5px; color: var(--ef-muted); margin-bottom: 14px; }
-  .score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
-  .score-item { }
+  .scoring-note { font-size: 12.5px; color: var(--ef-dim); margin-bottom: 14px; }
+  .score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
   .score-item-lbl { font-size: 12px; color: var(--ef-dim); margin-bottom: 6px; display: flex; justify-content: space-between; }
-  .score-item-lbl b { color: var(--ef-accent-br); font-weight: 600; }
+  .score-item-lbl b { color: var(--ef-accent); font-weight: 600; }
   .score-slider { width: 100%; accent-color: var(--ef-accent); cursor: pointer; }
   .score-total { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--ef-border); font-size: 13px; color: var(--ef-dim); text-align: right; }
-  .score-total b { color: var(--ef-accent-br); font-size: 16px; font-weight: 700; }
+  .score-total b { color: var(--ef-accent); font-size: 16px; font-weight: 700; }
 
   /* Footer actions */
   .actions {
     position: sticky; bottom: 0; margin-top: 26px; padding: 16px 0 4px;
-    background: linear-gradient(to top, var(--ef-bg) 70%, transparent);
+    background: linear-gradient(to top, #fff 72%, transparent);
     display: flex; align-items: center; gap: 12px;
   }
   .btn {
@@ -149,32 +153,33 @@
   }
   .btn:active { transform: scale(.98); }
   .btn-primary { background: var(--ef-accent); color: #fff; }
-  .btn-primary:hover { background: #3f7d70; }
-  .btn-ghost { background: transparent; color: var(--ef-dim); border-color: var(--ef-border); }
+  .btn-primary:hover { background: #2c5850; }
+  .btn-ghost { background: #fff; color: var(--ef-dim); border-color: var(--ef-border); }
   .btn-ghost:hover { color: var(--ef-text); border-color: var(--ef-muted); }
   .save-state { font-size: 12.5px; color: var(--ef-muted); margin-left: auto; }
-  .save-state.saved { color: var(--ef-accent-br); }
+  .save-state.saved { color: var(--ef-accent); font-weight: 600; }
 
   .foot-note { text-align: center; font-size: 11px; color: var(--ef-muted); margin-top: 20px; }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <div class="hd">
-    <div class="hd-mark">E</div>
-    <div>
-      <div class="hd-title">Interview Notes</div>
-      <div class="hd-sub">Structured capture · syncs to contact record</div>
-    </div>
-    <span class="hd-badge">App&nbsp;02 · POC</span>
+<div class="topbar">
+  <div class="topbar-mark">E</div>
+  <div>
+    <div class="topbar-title">Interview Notes</div>
+    <div class="topbar-sub">Structured capture &middot; syncs to contact record</div>
   </div>
+  <span class="topbar-badge">App&nbsp;02 &middot; POC</span>
+</div>
+
+<div class="wrap">
 
   <div class="cand">
     <div class="cand-av" id="candInitials">TR</div>
     <div>
       <div class="cand-name" id="candName">Taylor Reynolds</div>
-      <div class="cand-meta" id="candMeta">Outside Sales Professional · Indeed · Applied 3d ago</div>
+      <div class="cand-meta" id="candMeta">Outside Sales Professional &middot; Indeed &middot; Applied 3d ago</div>
     </div>
     <div class="cand-stage">
       <div class="cand-stage-lbl">Current stage</div>
@@ -188,7 +193,6 @@
     <button class="tab" data-panel="final">Final<span class="tab-sub">iv_final_notes</span></button>
   </div>
 
-  <!-- SCREENING -->
   <div class="panel active" data-panel="screening">
     <details class="script">
       <summary>Screening call script &amp; prompts</summary>
@@ -196,8 +200,8 @@
         Kept separate from notes so scripts can be updated centrally.
         <ul>
           <li>Confirm they watched the Career Overview videos.</li>
-          <li>"Tell me about yourself professionally — why a new position?"</li>
-          <li>Interest rating 1–10 after the CO. 7+ moves forward.</li>
+          <li>"Tell me about yourself professionally &mdash; why a new position?"</li>
+          <li>Interest rating 1&ndash;10 after the CO. 7+ moves forward.</li>
           <li>Valid license + reliable transportation?</li>
         </ul>
       </div>
@@ -205,28 +209,27 @@
     <div class="field">
       <label class="field-lbl">Screening notes <span class="field-key">screening_notes</span></label>
       <div class="field-hint">Interest signals, push/pull factors, red flags, and the interest rating.</div>
-      <textarea placeholder="What stood out? Interest level, motivation, any concerns…"></textarea>
+      <textarea placeholder="What stood out? Interest level, motivation, any concerns&hellip;"></textarea>
     </div>
   </div>
 
-  <!-- 1ST INTERVIEW -->
   <div class="panel" data-panel="iv1">
     <details class="script">
       <summary>1st interview script &amp; the 5 objections</summary>
       <div class="script-body">
         <ul>
-          <li>OBJ 1 — Money: cushion if income lags to month 2/3?</li>
-          <li>OBJ 2 — Support at home: what does spouse/family think?</li>
-          <li>OBJ 3 — Schedule: self-management amid distractions.</li>
-          <li>OBJ 4 — Coachability: follow the system when it's unclear?</li>
-          <li>OBJ 5 — Grit: hardest thing overcome; what keeps them going.</li>
+          <li>OBJ 1 &mdash; Money: cushion if income lags to month 2/3?</li>
+          <li>OBJ 2 &mdash; Support at home: what does spouse/family think?</li>
+          <li>OBJ 3 &mdash; Schedule: self-management amid distractions.</li>
+          <li>OBJ 4 &mdash; Coachability: follow the system when it's unclear?</li>
+          <li>OBJ 5 &mdash; Grit: hardest thing overcome; what keeps them going.</li>
         </ul>
       </div>
     </details>
     <div class="field">
       <label class="field-lbl">1st interview notes <span class="field-key">iv1_notes</span></label>
       <div class="field-hint">Objection responses, fit signals, hours/week, income requirements.</div>
-      <textarea placeholder="How did they handle the objections? Fit, energy, commitment…"></textarea>
+      <textarea placeholder="How did they handle the objections? Fit, energy, commitment&hellip;"></textarea>
     </div>
 
     <div class="scoring">
@@ -234,7 +237,7 @@
         <h3>Qualification scoring</h3>
         <span class="scoring-tag">Feedback wanted</span>
       </div>
-      <div class="scoring-note">Pulled pending recruiter input. Sliders shown for discussion — do these four dimensions match how you actually evaluate? Tell us at the roundtable.</div>
+      <div class="scoring-note">Pulled pending recruiter input. Sliders shown for discussion &mdash; do these dimensions and weights match how you actually evaluate? Tell us at the roundtable.</div>
       <div class="score-grid">
         <div class="score-item">
           <div class="score-item-lbl">Personality <b><span class="sv">2</span>/3</b></div>
@@ -257,14 +260,13 @@
     </div>
   </div>
 
-  <!-- FINAL -->
   <div class="panel" data-panel="final">
     <details class="script">
       <summary>Final interview wrap-up prompts</summary>
       <div class="script-body">
         <ul>
           <li>Which of the 5 challenges is biggest for you? Why?</li>
-          <li>Share core values — which one resonates most?</li>
+          <li>Share core values &mdash; which one resonates most?</li>
           <li>Do you think we should work together? Why?</li>
           <li>Pre-offer questions (surface before extending).</li>
         </ul>
@@ -273,26 +275,25 @@
     <div class="field">
       <label class="field-lbl">Final interview notes <span class="field-key">iv_final_notes</span></label>
       <div class="field-hint">Closing signals, pre-offer questions, decision rationale.</div>
-      <textarea placeholder="Are they in? Remaining questions before an offer…"></textarea>
+      <textarea placeholder="Are they in? Remaining questions before an offer&hellip;"></textarea>
     </div>
     <div class="field">
       <label class="field-lbl">Pre-offer questions <span class="field-key">final_iv_pre_offer</span></label>
-      <input type="text" placeholder="Anything they need answered before the offer…">
+      <input type="text" placeholder="Anything they need answered before the offer&hellip;">
     </div>
   </div>
 
   <div class="actions">
     <button class="btn btn-primary" id="saveBtn">Save to contact</button>
     <button class="btn btn-ghost">Copy summary</button>
-    <span class="save-state" id="saveState">Draft · not yet saved</span>
+    <span class="save-state" id="saveState">Draft &middot; not yet saved</span>
   </div>
 
-  <div class="foot-note">POC façade · writes to the contact record via the recruiter sub in production</div>
+  <div class="foot-note">POC facade &middot; writes to the contact record via the recruiter sub in production</div>
 
 </div>
 
 <script>
-  // Tab switching
   document.querySelectorAll('.tab').forEach(function (t) {
     t.addEventListener('click', function () {
       var p = t.dataset.panel;
@@ -300,7 +301,6 @@
       document.querySelectorAll('.panel').forEach(function (x) { x.classList.toggle('active', x.dataset.panel === p); });
     });
   });
-  // Score slider readouts + running total (max 10)
   var sliders = document.querySelectorAll('.score-slider');
   var totalEl = document.getElementById('scoreTotal');
   function recompute() {
@@ -313,14 +313,13 @@
   }
   sliders.forEach(function (s) { s.addEventListener('input', recompute); });
   recompute();
-  // Save façade
   var saveBtn = document.getElementById('saveBtn');
   var saveState = document.getElementById('saveState');
   saveBtn.addEventListener('click', function () {
-    saveState.textContent = 'Saving…';
+    saveState.textContent = 'Saving\u2026';
     saveState.classList.remove('saved');
     setTimeout(function () {
-      saveState.textContent = '✓ Saved to Taylor Reynolds · just now';
+      saveState.textContent = '\u2713 Saved to Taylor Reynolds \u00b7 just now';
       saveState.classList.add('saved');
     }, 550);
   });
