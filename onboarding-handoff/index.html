@@ -3,395 +3,373 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Elevated — Onboarding Handoff (Prototype)</title>
+<title>Onboarding Handoff · Elevated</title>
 <style>
   :root {
-    --coral: #ff6b5a;
-    --teal: #4ecdc4;
-    --ink: #1a1d23;
-    --slate: #2a2e37;
-    --slate-2: #333842;
-    --line: #3d4350;
-    --text: #e8eaed;
-    --muted: #9aa0ac;
-    --good: #4ecdc4;
-    --warn: #ffb454;
-    --bg: #14161b;
+    --ef-accent:    #35685E;
+    --ef-accent-br: #6FB3A4;
+    --ef-accent-dk: #244840;
+    --ef-header:    #0F1A17;
+    --ef-bg:        #FFFFFF;
+    --ef-surface:   #F7F9F8;
+    --ef-surface-2: #EEF2F1;
+    --ef-text:      #1A2420;
+    --ef-dim:       #5C6B65;
+    --ef-muted:     #94A29C;
+    --ef-border:    #E1E7E5;
+    --ef-amber:     #B07D1F;
+    --ef-radius:    10px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--text);
+  html, body {
+    background: var(--ef-bg);
+    color: var(--ef-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+    font-size: 15px;
     line-height: 1.5;
-    padding: 24px;
-    max-width: 1100px;
-    margin: 0 auto;
+    -webkit-font-smoothing: antialiased;
   }
-  h1, h2, h3 { font-family: 'Space Mono', 'DM Sans', monospace; letter-spacing: -0.5px; }
-  .proto-banner {
-    background: linear-gradient(90deg, rgba(255,107,90,0.15), rgba(78,205,196,0.15));
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 12px 16px;
-    font-size: 13px;
-    color: var(--muted);
-    margin-bottom: 24px;
-  }
-  .proto-banner strong { color: var(--text); }
-  .stage-label {
-    display: inline-block;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--teal);
-    margin-bottom: 6px;
-  }
-  h1 { font-size: 24px; margin-bottom: 4px; }
-  .sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
 
-  /* --- Step flow indicator --- */
-  .flow {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 28px;
-    flex-wrap: wrap;
+  /* Dark green header strip — bridges the dark GHL sidebar to the white body */
+  .topbar {
+    background: var(--ef-header);
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 13px;
   }
+  .topbar-mark {
+    width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
+    background: var(--ef-accent); display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: #fff; font-size: 16px; letter-spacing: -.5px;
+  }
+  .topbar-title { font-size: 16px; font-weight: 600; color: #F5F8F7; letter-spacing: -.2px; }
+  .topbar-sub { font-size: 12px; color: #8FA39C; margin-top: 1px; }
+  .topbar-badge {
+    margin-left: auto; font-size: 10.5px; font-weight: 600; letter-spacing: .05em;
+    color: var(--ef-accent-br); background: rgba(53,104,94,.28);
+    padding: 4px 10px; border-radius: 999px; text-transform: uppercase;
+  }
+
+  .wrap { max-width: 820px; margin: 0 auto; padding: 22px 24px 60px; }
+
+  /* Flow stepper */
+  .flow { display: flex; gap: 8px; margin-bottom: 22px; }
   .flow-step {
-    flex: 1;
-    min-width: 140px;
-    background: var(--slate);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 12px;
-    color: var(--muted);
-    position: relative;
-    transition: all 0.3s;
-  }
-  .flow-step.active {
-    border-color: var(--teal);
-    background: var(--slate-2);
-    color: var(--text);
-  }
-  .flow-step.done {
-    border-color: var(--good);
-    color: var(--good);
+    flex: 1; background: var(--ef-surface); border: 1px solid var(--ef-border);
+    border-radius: 8px; padding: 10px 12px; font-size: 12px; color: var(--ef-muted);
+    transition: background .16s, color .16s, border-color .16s;
   }
   .flow-step .n {
-    font-family: 'Space Mono', monospace;
-    font-weight: 700;
-    margin-right: 6px;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 50%; background: var(--ef-surface-2);
+    color: var(--ef-muted); font-size: 11px; font-weight: 700; margin-right: 7px;
   }
+  .flow-step.active { background: #fff; border-color: var(--ef-accent); color: var(--ef-text); }
+  .flow-step.active .n { background: var(--ef-accent); color: #fff; }
+  .flow-step.done { color: var(--ef-accent); border-color: var(--ef-border); }
+  .flow-step.done .n { background: var(--ef-accent-br); color: #fff; }
 
-  /* --- Cards --- */
-  .card {
-    background: var(--slate);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 22px;
-    margin-bottom: 20px;
+  /* Candidate strip */
+  .cand {
+    display: flex; align-items: center; gap: 13px;
+    background: var(--ef-surface); border: 1px solid var(--ef-border);
+    border-radius: var(--ef-radius); padding: 13px 16px; margin-bottom: 20px;
   }
+  .cand-av {
+    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+    background: var(--ef-accent-dk); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px;
+  }
+  .cand-name { font-weight: 600; font-size: 15px; }
+  .cand-meta { font-size: 12.5px; color: var(--ef-dim); margin-top: 1px; }
+  .cand-stage { margin-left: auto; text-align: right; }
+  .cand-stage-lbl { font-size: 10.5px; color: var(--ef-muted); text-transform: uppercase; letter-spacing: .06em; }
+  .cand-stage-val { font-size: 13px; font-weight: 600; color: var(--ef-accent); margin-top: 2px; }
+
+  .card { margin-bottom: 20px; }
   .hidden { display: none; }
+  .section-lbl {
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em;
+    color: var(--ef-accent); font-weight: 700; margin-bottom: 10px;
+  }
+  .lead { font-size: 13.5px; color: var(--ef-dim); margin-bottom: 16px; }
+  .lead b { color: var(--ef-text); font-weight: 600; }
 
-  /* --- Pipeline board (Step 1) --- */
-  .board { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 6px; }
+  /* Step 1: pipeline board */
+  .board { display: flex; gap: 12px; }
   .col {
-    min-width: 210px;
-    background: var(--ink);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 12px;
+    flex: 1; background: var(--ef-surface); border: 1px solid var(--ef-border);
+    border-radius: var(--ef-radius); padding: 12px;
   }
-  .col h3 { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
-  .col.dropzone { border: 1px dashed var(--line); transition: all 0.2s; }
-  .col.dropzone.over { border-color: var(--coral); background: rgba(255,107,90,0.08); }
-  .opp-card {
-    background: var(--slate-2);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 10px 12px;
-    margin-bottom: 8px;
-    cursor: grab;
-    font-size: 13px;
-    transition: all 0.15s;
+  .col h3 {
+    font-size: 11px; color: var(--ef-muted); text-transform: uppercase;
+    letter-spacing: .05em; margin-bottom: 10px; font-weight: 600;
   }
-  .opp-card:hover { border-color: var(--teal); transform: translateY(-1px); }
-  .opp-card:active { cursor: grabbing; }
-  .opp-card .name { font-weight: 600; }
-  .opp-card .meta { color: var(--muted); font-size: 11px; margin-top: 2px; }
-  .drag-hint { font-size: 11px; color: var(--coral); margin-top: 10px; }
+  .col.dropzone { border: 1px dashed var(--ef-muted); background: #fff; transition: border-color .16s, background .16s; }
+  .col.dropzone.over { border-color: var(--ef-accent); background: var(--ef-surface); }
+  .opp {
+    background: #fff; border: 1px solid var(--ef-border); border-radius: 8px;
+    padding: 10px 12px; margin-bottom: 8px; cursor: grab; font-size: 13px;
+    transition: border-color .14s, transform .1s, box-shadow .14s;
+  }
+  .opp:hover { border-color: var(--ef-accent-br); transform: translateY(-1px); box-shadow: 0 3px 10px rgba(15,26,23,.06); }
+  .opp:active { cursor: grabbing; }
+  .opp .nm { font-weight: 600; }
+  .opp .mt { color: var(--ef-muted); font-size: 11px; margin-top: 2px; }
+  .drag-hint { font-size: 11px; color: var(--ef-accent); margin-top: 8px; font-weight: 500; }
 
-  /* --- Task notification (Step 2) --- */
+  /* Step 2: task */
   .task {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    background: var(--slate-2);
-    border: 1px solid var(--teal);
-    border-radius: 10px;
-    padding: 14px 16px;
+    display: flex; gap: 13px; align-items: flex-start;
+    background: var(--ef-surface); border: 1px solid var(--ef-accent);
+    border-left: 3px solid var(--ef-accent); border-radius: var(--ef-radius); padding: 15px 17px;
   }
-  .task .icon { font-size: 20px; }
-  .task .body { flex: 1; }
-  .task .title { font-weight: 600; margin-bottom: 2px; }
-  .task .desc { font-size: 13px; color: var(--muted); }
+  .task-ic {
+    width: 30px; height: 30px; border-radius: 7px; flex-shrink: 0;
+    background: rgba(53,104,94,.12); color: var(--ef-accent);
+    display: flex; align-items: center; justify-content: center; font-size: 15px;
+  }
+  .task-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+  .task-desc { font-size: 12.5px; color: var(--ef-dim); }
 
-  /* --- Form (Step 3) --- */
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .field { display: flex; flex-direction: column; gap: 5px; }
+  /* Step 3: form */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
   .field.full { grid-column: 1 / -1; }
-  .field label { font-size: 12px; color: var(--muted); font-weight: 500; }
-  .field label .req { color: var(--coral); }
-  .field input, .field select, .field textarea {
-    background: var(--ink);
-    border: 1px solid var(--line);
-    border-radius: 7px;
-    padding: 9px 11px;
-    color: var(--text);
-    font-family: inherit;
-    font-size: 13px;
+  .field label { font-size: 12.5px; font-weight: 600; color: var(--ef-text); }
+  .field .key { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; color: var(--ef-muted); font-weight: 400; margin-left: 5px; }
+  .field .ss { font-size: 9.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ef-amber); border: 1px solid var(--ef-amber); border-radius: 999px; padding: 1px 6px; margin-left: 6px; }
+  input[type=text], input[type=email], input[type=date], select, textarea {
+    width: 100%; background: #fff; color: var(--ef-text);
+    border: 1px solid var(--ef-border); border-radius: 8px;
+    padding: 10px 12px; font-family: inherit; font-size: 14px; line-height: 1.5;
+    transition: border-color .14s, box-shadow .14s;
   }
-  .field input:focus, .field select:focus, .field textarea:focus {
-    outline: none;
-    border-color: var(--teal);
+  textarea { resize: vertical; min-height: 62px; }
+  input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--ef-accent);
+    box-shadow: 0 0 0 3px rgba(53,104,94,.14);
   }
-  .field textarea { resize: vertical; min-height: 60px; }
-  .field .ss-tag {
-    font-size: 10px;
-    color: var(--warn);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+  input::placeholder, textarea::placeholder { color: var(--ef-muted); }
   .group-head {
-    grid-column: 1 / -1;
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--teal);
-    margin-top: 12px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid var(--line);
+    grid-column: 1 / -1; font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em;
+    color: var(--ef-accent); font-weight: 700; padding-bottom: 7px;
+    border-bottom: 1px solid var(--ef-border); margin-top: 8px;
   }
   .group-head:first-child { margin-top: 0; }
 
-  .form-actions { margin-top: 22px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-  button {
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    padding: 12px 22px;
-    cursor: pointer;
-    transition: all 0.2s;
+  /* Footer actions */
+  .actions {
+    position: sticky; bottom: 0; margin-top: 24px; padding: 16px 0 4px;
+    background: linear-gradient(to top, #fff 72%, transparent);
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
   }
-  .btn-primary {
-    background: linear-gradient(90deg, var(--coral), #ff8a7a);
-    color: white;
+  .btn {
+    font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+    border-radius: 8px; padding: 11px 20px; border: 1px solid transparent;
+    transition: background .14s, border-color .14s, transform .1s;
   }
-  .btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
-  .btn-ghost {
-    background: transparent;
-    border: 1px solid var(--line);
-    color: var(--muted);
-  }
-  .warn-note {
-    font-size: 12px;
-    color: var(--warn);
-    background: rgba(255,180,84,0.1);
-    border: 1px solid rgba(255,180,84,0.3);
-    border-radius: 7px;
-    padding: 8px 12px;
-    flex: 1;
-    min-width: 200px;
+  .btn:active { transform: scale(.98); }
+  .btn-primary { background: var(--ef-accent); color: #fff; }
+  .btn-primary:hover { background: #2c5850; }
+  .btn-ghost { background: #fff; color: var(--ef-dim); border-color: var(--ef-border); }
+  .btn-ghost:hover { color: var(--ef-text); border-color: var(--ef-muted); }
+  .warn-inline {
+    font-size: 12px; color: var(--ef-amber);
+    background: rgba(176,125,31,.08); border: 1px solid rgba(176,125,31,.3);
+    border-radius: 8px; padding: 8px 12px; flex: 1; min-width: 220px;
   }
 
-  /* --- Confirmation (Step 4) --- */
-  .confirm { text-align: center; padding: 20px; }
-  .confirm .big { font-size: 44px; margin-bottom: 10px; }
-  .confirm h2 { color: var(--good); margin-bottom: 10px; }
-  .confirm .detail {
-    text-align: left;
-    background: var(--ink);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 14px 16px;
-    margin: 16px auto 0;
-    max-width: 520px;
-    font-size: 13px;
+  /* Step 4: confirmation */
+  .confirm { text-align: center; padding: 12px 0; }
+  .confirm-ic {
+    width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 14px;
+    background: rgba(53,104,94,.12); color: var(--ef-accent);
+    display: flex; align-items: center; justify-content: center; font-size: 26px;
   }
-  .confirm .detail .row { display: flex; gap: 8px; padding: 4px 0; }
-  .confirm .detail .row .k { color: var(--muted); min-width: 150px; }
-  .confirm .detail .row .v { color: var(--text); }
-  .confirm .detail .row .v.good { color: var(--good); }
-  .reset { margin-top: 20px; }
+  .confirm h2 { font-size: 19px; font-weight: 600; margin-bottom: 6px; }
+  .confirm p { font-size: 13.5px; color: var(--ef-dim); margin-bottom: 18px; }
+  .detail {
+    text-align: left; background: var(--ef-surface); border: 1px solid var(--ef-border);
+    border-radius: var(--ef-radius); padding: 8px 16px; max-width: 480px; margin: 0 auto;
+  }
+  .detail .row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--ef-border); font-size: 13px; }
+  .detail .row:last-child { border-bottom: none; }
+  .detail .row .rk { color: var(--ef-dim); flex: 1; }
+  .detail .row .rv { color: var(--ef-accent); font-weight: 600; }
+  .detail .row .chk { color: var(--ef-accent-br); font-weight: 700; }
+
+  .foot-note { text-align: center; font-size: 11px; color: var(--ef-muted); margin-top: 22px; }
 </style>
 </head>
 <body>
 
-<div class="proto-banner">
-  <strong>⚠️ PROTOTYPE / PROOF OF CONCEPT.</strong> Placeholder data, no live GHL connection. This demonstrates the <em>flow &amp; interaction</em> Dillon approved: recruiter drags the candidate to the pass-off stage → a task appears → the form opens → "Send Onboarding Email" fires the handoff. The real version writes to GHL and triggers the actual workflow.
+<div class="topbar">
+  <div class="topbar-mark">E</div>
+  <div>
+    <div class="topbar-title">Onboarding Handoff</div>
+    <div class="topbar-sub">Recruiter checklist &middot; baton pass to onboarding</div>
+  </div>
+  <span class="topbar-badge">App&nbsp;03 &middot; POC</span>
 </div>
 
-<h1>Elevated — Onboarding Handoff</h1>
-<div class="sub">App #3 · Recruiter pre-onboarding checklist &amp; baton pass</div>
+<div class="wrap">
 
-<!-- Flow indicator -->
-<div class="flow" id="flow">
-  <div class="flow-step active" data-step="1"><span class="n">1</span>Drag to "Onboarding Pass-Off"</div>
-  <div class="flow-step" data-step="2"><span class="n">2</span>Task appears</div>
-  <div class="flow-step" data-step="3"><span class="n">3</span>Complete checklist</div>
-  <div class="flow-step" data-step="4"><span class="n">4</span>Send onboarding email</div>
-</div>
+  <!-- Flow stepper -->
+  <div class="flow" id="flow">
+    <div class="flow-step active" data-step="1"><span class="n">1</span>Move to pass-off</div>
+    <div class="flow-step" data-step="2"><span class="n">2</span>Task created</div>
+    <div class="flow-step" data-step="3"><span class="n">3</span>Complete checklist</div>
+    <div class="flow-step" data-step="4"><span class="n">4</span>Send handoff</div>
+  </div>
 
-<!-- STEP 1: Pipeline board -->
-<div class="card" id="step1">
-  <span class="stage-label">Step 1 · Applicant Pipeline</span>
-  <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Drag <strong>Jordan Rivera</strong> from "Offer Extended" into "Onboarding Pass-Off" to begin the handoff.</p>
-  <div class="board">
-    <div class="col">
-      <h3>Final Interview</h3>
-      <div class="opp-card"><div class="name">Sam Chen</div><div class="meta">HC: Maria · 3 days</div></div>
+  <!-- Candidate strip -->
+  <div class="cand">
+    <div class="cand-av">JR</div>
+    <div>
+      <div class="cand-name">Jordan Rivera</div>
+      <div class="cand-meta">Outside Sales Professional &middot; Indeed &middot; HC: Maria</div>
     </div>
-    <div class="col">
-      <h3>Offer Extended</h3>
-      <div class="opp-card" id="dragCard" draggable="true">
-        <div class="name">Jordan Rivera</div>
-        <div class="meta">HC: Maria · Recruiter: You</div>
+    <div class="cand-stage">
+      <div class="cand-stage-lbl">Current stage</div>
+      <div class="cand-stage-val" id="candStage">Offer Extended</div>
+    </div>
+  </div>
+
+  <!-- STEP 1: board -->
+  <div class="card" id="step1">
+    <div class="section-lbl">Step 1 &middot; Applicant Pipeline</div>
+    <div class="lead">Drag <b>Jordan Rivera</b> from "Offer Extended" into "Onboarding Pass-Off" to begin the handoff.</div>
+    <div class="board">
+      <div class="col">
+        <h3>Final Interview</h3>
+        <div class="opp"><div class="nm">Sam Chen</div><div class="mt">HC: Maria &middot; 3d</div></div>
       </div>
-      <div class="drag-hint">↑ drag this card →</div>
-    </div>
-    <div class="col dropzone" id="dropzone">
-      <h3>⭐ Onboarding Pass-Off</h3>
-      <div style="font-size:11px;color:var(--muted);">drop here</div>
-    </div>
-  </div>
-</div>
-
-<!-- STEP 2: Task notification -->
-<div class="card hidden" id="step2">
-  <span class="stage-label">Step 2 · Task auto-created (from the drag)</span>
-  <div class="task">
-    <div class="icon">📋</div>
-    <div class="body">
-      <div class="title">Complete Onboarding Handoff — Jordan Rivera</div>
-      <div class="desc">You moved Jordan to Onboarding Pass-Off. Complete the recruiter checklist and send the onboarding email to hand off to Laura.</div>
-      <div style="margin-top:10px;">
-        <button class="btn-primary" onclick="openForm()">Open Checklist →</button>
+      <div class="col">
+        <h3>Offer Extended</h3>
+        <div class="opp" id="dragCard" draggable="true">
+          <div class="nm">Jordan Rivera</div>
+          <div class="mt">HC: Maria &middot; Recruiter: You</div>
+        </div>
+        <div class="drag-hint">&uarr; drag this card &rarr;</div>
+      </div>
+      <div class="col dropzone" id="dropzone">
+        <h3>&#9733; Onboarding Pass-Off</h3>
+        <div style="font-size:11px;color:var(--ef-muted);">drop here</div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- STEP 3: Form -->
-<div class="card hidden" id="step3">
-  <span class="stage-label">Step 3 · Recruiter Checklist — Jordan Rivera</span>
-  <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">Fields marked <span style="color:var(--coral)">*</span> feed the Smartsheet production push at the end of onboarding. Blanks won't block the handoff — Laura will chase anything missing.</p>
-
-  <div class="form-grid" id="formGrid">
-    <div class="group-head">Assignment &amp; Credit</div>
-    <div class="field"><label>FHD Recruiter Credit <span class="ss-tag">smartsheet</span></label><input type="text" value="You"></div>
-    <div class="field"><label>Sourced By <span class="ss-tag">smartsheet</span></label><input type="text" placeholder="e.g. Indeed / referral name"></div>
-    <div class="field"><label>Interviewer <span class="ss-tag">smartsheet</span></label><input type="text" placeholder="Who interviewed"></div>
-    <div class="field"><label>Field Trainer <span class="ss-tag">smartsheet</span></label><input type="text" placeholder="Assigned trainer"></div>
-    <div class="field"><label>Agency Owner <span class="ss-tag">smartsheet</span></label><input type="text" placeholder="AO name"></div>
-
-    <div class="group-head">Sales School &amp; Logistics</div>
-    <div class="field"><label>Pay Plan <span class="ss-tag">smartsheet</span></label>
-      <select><option value="">Select…</option><option>Standard</option><option>Advanced</option><option>Custom</option></select></div>
-    <div class="field"><label>Sales School <span class="ss-tag">smartsheet</span></label>
-      <select><option value="">Select…</option><option>Confirmed</option><option>Pending</option></select></div>
-    <div class="field"><label>SS Week <span class="ss-tag">smartsheet</span></label><input type="date"></div>
-    <div class="field"><label>Flying or Driving <span class="ss-tag">smartsheet</span></label>
-      <select><option value="">Select…</option><option>Flying</option><option>Driving</option></select></div>
-    <div class="field"><label>Need SS Hotel</label>
-      <select><option value="">Select…</option><option>Yes</option><option>No</option></select></div>
-    <div class="field"><label>State Selling In <span class="ss-tag">smartsheet</span></label><input type="text" placeholder="e.g. TX"></div>
-
-    <div class="group-head">Licensing &amp; Exam</div>
-    <div class="field"><label>Licensing Course</label>
-      <select><option value="">Select…</option><option>Purchased</option><option>In progress</option><option>Complete</option></select></div>
-    <div class="field"><label>Proof of Course Purchase</label><input type="text" placeholder="Confirmation # / link"></div>
-    <div class="field"><label>Exam Scheduled (date)</label><input type="date"></div>
-    <div class="field"><label>Exam Time</label><input type="text" placeholder="e.g. 2:00 PM"></div>
-    <div class="field"><label>Fingerprints Done</label>
-      <select><option value="">Select…</option><option>Yes</option><option>No</option></select></div>
-    <div class="field"><label>License Application Confirmed</label>
-      <select><option value="">Select…</option><option>Yes</option><option>No</option></select></div>
-
-    <div class="group-head">Accounts &amp; Equipment</div>
-    <div class="field"><label>New FHD Email</label><input type="email" placeholder="name@fhd…"></div>
-    <div class="field"><label>Voxer Username</label><input type="text" placeholder="Voxer handle"></div>
-    <div class="field"><label>iPad</label>
-      <select><option value="">Select…</option><option>Issued</option><option>Not yet</option><option>N/A</option></select></div>
-    <div class="field"><label>Admin To-Do <span class="ss-tag">smartsheet</span></label><input type="text" placeholder="Any admin follow-ups"></div>
-
-    <div class="group-head">Notes</div>
-    <div class="field full"><label>SS Special Circumstances</label><textarea placeholder="Anything unusual about this hire's sales school…"></textarea></div>
-    <div class="field full"><label>Keep in Mind Notes</label><textarea placeholder="Context Laura should know…"></textarea></div>
-  </div>
-
-  <div class="form-actions">
-    <button class="btn-primary" onclick="sendHandoff()">📧 Send Onboarding Email</button>
-    <button class="btn-ghost" onclick="location.reload()">Cancel</button>
-    <div class="warn-note">Any blank fields are captured on a task for Laura to chase down — the handoff still completes.</div>
-  </div>
-</div>
-
-<!-- STEP 4: Confirmation -->
-<div class="card hidden" id="step4">
-  <div class="confirm">
-    <div class="big">✅</div>
-    <h2>Onboarding Email Sent</h2>
-    <p style="color:var(--muted);">Jordan Rivera has been handed off to Laura. Here's what fired automatically:</p>
-    <div class="detail">
-      <div class="row"><span class="k">📧 Baton-pass email</span><span class="v good">Sent to Laura + Jordan</span></div>
-      <div class="row"><span class="k">🏆 Applicant opportunity</span><span class="v good">Marked WON</span></div>
-      <div class="row"><span class="k">➕ Hired pipeline</span><span class="v good">New opportunity created</span></div>
-      <div class="row"><span class="k">👤 Owner assigned</span><span class="v good">Laura</span></div>
-      <div class="row"><span class="k">👥 Followers added</span><span class="v good">HC, Recruiter, Director</span></div>
-      <div class="row"><span class="k">📋 Missing-field task</span><span class="v">Created for Laura (if any blanks)</span></div>
-    </div>
-    <div class="reset">
-      <button class="btn-ghost" onclick="location.reload()">↺ Run the demo again</button>
+  <!-- STEP 2: task -->
+  <div class="card hidden" id="step2">
+    <div class="section-lbl">Step 2 &middot; Task auto-created</div>
+    <div class="task">
+      <div class="task-ic">&#9776;</div>
+      <div style="flex:1;">
+        <div class="task-title">Complete Onboarding Handoff &mdash; Jordan Rivera</div>
+        <div class="task-desc">Moving Jordan to Onboarding Pass-Off created this task. Complete the recruiter checklist and send the handoff to Laura.</div>
+        <div style="margin-top:11px;">
+          <button class="btn btn-primary" onclick="openForm()">Open checklist &rarr;</button>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- STEP 3: form -->
+  <div class="card hidden" id="step3">
+    <div class="section-lbl">Step 3 &middot; Recruiter Checklist</div>
+    <div class="lead">Fields marked <span class="ss">SS</span> feed the Smartsheet production push at the end of onboarding. Blanks won't block the handoff &mdash; Laura chases anything missing.</div>
+
+    <div class="form-grid">
+      <div class="group-head">Assignment &amp; Credit</div>
+      <div class="field"><label>FHD Recruiter Credit <span class="ss">SS</span></label><input type="text" value="You"></div>
+      <div class="field"><label>Sourced By <span class="ss">SS</span></label><input type="text" placeholder="Indeed / referral name"></div>
+      <div class="field"><label>Interviewer <span class="ss">SS</span></label><input type="text" placeholder="Who interviewed"></div>
+      <div class="field"><label>Agency Owner <span class="ss">SS</span></label><input type="text" placeholder="AO name"></div>
+
+      <div class="group-head">Sales School &amp; Logistics</div>
+      <div class="field"><label>Pay Plan <span class="ss">SS</span></label>
+        <select><option value="">Select&hellip;</option><option>Guarantee (0/0)</option><option>Commission (30/1)</option><option>1st Promotion (35/1)</option></select></div>
+      <div class="field"><label>Sales School <span class="ss">SS</span></label>
+        <select><option value="">Select&hellip;</option><option>Mpls B2B</option><option>Dallas B2B (FHD)</option><option>Virtual B2B</option><option>Self-Paced</option><option>Not Attending</option></select></div>
+      <div class="field"><label>SS Week <span class="ss">SS</span></label><input type="date"></div>
+      <div class="field"><label>Flying or Driving <span class="ss">SS</span></label><input type="text" placeholder="Flying / Driving"></div>
+      <div class="field"><label>Need SS Hotel</label>
+        <select><option value="">Select&hellip;</option><option>Yes</option><option>No</option><option>+1 Night</option></select></div>
+      <div class="field"><label>State Selling In <span class="ss">SS</span></label><input type="text" placeholder="e.g. TX"></div>
+
+      <div class="group-head">Licensing &amp; Exam</div>
+      <div class="field"><label>License Type</label>
+        <select><option value="">Select&hellip;</option><option>Health Only</option><option>Life and Health</option></select></div>
+      <div class="field"><label>Exam Scheduled</label><input type="date"></div>
+      <div class="field"><label>Exam Time</label><input type="text" placeholder="e.g. 2:00 PM"></div>
+      <div class="field"><label>Fingerprints Done</label>
+        <select><option value="">Select&hellip;</option><option>Yes</option><option>No</option><option>N/A</option><option>Scheduled</option></select></div>
+      <div class="field"><label>Proof of Course Purchase</label><input type="text" placeholder="Confirmation # / link"></div>
+
+      <div class="group-head">Accounts &amp; Equipment</div>
+      <div class="field"><label>New FHD Email</label><input type="email" placeholder="name@fhd&hellip;"></div>
+      <div class="field"><label>Voxer Username</label><input type="text" placeholder="Voxer handle"></div>
+      <div class="field"><label>iPad</label><input type="text" placeholder="Issued / Not yet / N/A"></div>
+      <div class="field"><label>Admin To-Do <span class="ss">SS</span></label><input type="text" placeholder="Admin follow-ups"></div>
+
+      <div class="group-head">Notes</div>
+      <div class="field full"><label>SS Special Circumstances</label><textarea placeholder="Anything unusual about this hire's sales school&hellip;"></textarea></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="sendHandoff()">Send onboarding email</button>
+      <button class="btn btn-ghost" onclick="location.reload()">Cancel</button>
+      <div class="warn-inline">Blank fields are captured on a task for Laura &mdash; the handoff still completes.</div>
+    </div>
+  </div>
+
+  <!-- STEP 4: confirmation -->
+  <div class="card hidden" id="step4">
+    <div class="confirm">
+      <div class="confirm-ic">&#10003;</div>
+      <h2>Onboarding email sent</h2>
+      <p>Jordan Rivera has been handed off to Laura. Here's what fired automatically:</p>
+      <div class="detail">
+        <div class="row"><span class="rk">Baton-pass email</span><span class="rv">Sent to Laura &amp; Jordan</span><span class="chk">&#10003;</span></div>
+        <div class="row"><span class="rk">Applicant opportunity</span><span class="rv">Marked Won</span><span class="chk">&#10003;</span></div>
+        <div class="row"><span class="rk">Hired pipeline</span><span class="rv">New opportunity created</span><span class="chk">&#10003;</span></div>
+        <div class="row"><span class="rk">Owner assigned</span><span class="rv">Laura</span><span class="chk">&#10003;</span></div>
+        <div class="row"><span class="rk">Followers added</span><span class="rv">HC, Recruiter, Director</span><span class="chk">&#10003;</span></div>
+        <div class="row"><span class="rk">Missing-field task</span><span class="rv">Created for Laura</span><span class="chk">&#10003;</span></div>
+      </div>
+      <div style="margin-top:20px;">
+        <button class="btn btn-ghost" onclick="location.reload()">&#8635; Run the demo again</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot-note">POC facade &middot; triggers the handoff workflow &amp; writes to the contact record in production</div>
+
 </div>
 
 <script>
-  // --- Prototype flow logic (no backend; pure demonstration) ---
-
   function setFlow(step) {
-    document.querySelectorAll('.flow-step').forEach(el => {
-      const s = Number(el.dataset.step);
+    document.querySelectorAll('.flow-step').forEach(function (el) {
+      var s = Number(el.dataset.step);
       el.classList.remove('active', 'done');
       if (s < step) el.classList.add('done');
       if (s === step) el.classList.add('active');
     });
   }
-
   function show(id) { document.getElementById(id).classList.remove('hidden'); }
   function hide(id) { document.getElementById(id).classList.add('hidden'); }
 
-  // Step 1: drag-and-drop
-  const card = document.getElementById('dragCard');
-  const zone = document.getElementById('dropzone');
-
-  card.addEventListener('dragstart', e => {
-    e.dataTransfer.setData('text/plain', 'jordan');
-  });
-  zone.addEventListener('dragover', e => {
-    e.preventDefault();
-    zone.classList.add('over');
-  });
-  zone.addEventListener('dragleave', () => zone.classList.remove('over'));
-  zone.addEventListener('drop', e => {
+  var card = document.getElementById('dragCard');
+  var zone = document.getElementById('dropzone');
+  card.addEventListener('dragstart', function (e) { e.dataTransfer.setData('text/plain', 'jordan'); });
+  zone.addEventListener('dragover', function (e) { e.preventDefault(); zone.classList.add('over'); });
+  zone.addEventListener('dragleave', function () { zone.classList.remove('over'); });
+  zone.addEventListener('drop', function (e) {
     e.preventDefault();
     zone.classList.remove('over');
-    // Simulate the card landing + the task auto-creating
-    zone.innerHTML = '<h3>⭐ Onboarding Pass-Off</h3><div class="opp-card"><div class="name">Jordan Rivera</div><div class="meta">just moved</div></div>';
+    zone.innerHTML = '<h3>&#9733; Onboarding Pass-Off</h3><div class="opp"><div class="nm">Jordan Rivera</div><div class="mt">just moved</div></div>';
+    document.getElementById('candStage').textContent = 'Onboarding Pass-Off';
     setFlow(2);
     show('step2');
     document.getElementById('step2').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -402,7 +380,6 @@
     show('step3');
     document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
-
   function sendHandoff() {
     setFlow(4);
     hide('step3');
@@ -410,6 +387,5 @@
     document.getElementById('step4').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 </script>
-
 </body>
 </html>
